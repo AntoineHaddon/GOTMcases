@@ -5,7 +5,7 @@ instances:
     use: true 
     model: uvic/uvic_eco
     parameters:
-      use_icealgae: true                   # if true use vars from icealgae model  #jpnote
+      icebgcmdl: 3                         # ice BGC model (1=icealgae, 2= new iceeco only bottom ice algae, 3= new iceeco with melosira)
       ac : 0.03                            # light attenuation coefficient [m-1]
       f_seed: 0.1                          # fraction of ice algal fux as ph2 seeding [-]
       w1    : -1    #L09                   # de1 sinking rate [m/d]
@@ -50,7 +50,8 @@ instances:
       pmin  : 0.01 #def:0.01               # background plankton concentration [umol-N/L]
 # ice algae vars that need to be read in in the eco model #jpnote
       zia      : 0.03                      # ice algal layer thickness [m]
-      ac_ia    : 0.017  #mcdonald2015      # specific light attenuation coefficient for ice algae
+      # ac_ia    : 0.017  #mcdonald2015      # specific light attenuation coefficient for ice algae
+      ac_ia    : 0.06                      # specific light attenuation coefficient for ice algae (mg Chl m-2)-1
     initialization: 
       ph1 : 0.01 #de:0.01                  # ph1 initial value [umol/L]
       ph2 : 0.01 #de:0.01                  # ph2 initial value [umol/L]
@@ -64,12 +65,12 @@ instances:
       sil : 14.7                           # sil initial value [umol/L]
   
   uvic_icealgae: #University of Victoria Ice Algae model
-    use: true
+    use: false
     model: uvic/uvic_icealgae
     parameters:
       r_pond   : 0.0175                 # melt pond drainage rate [m d-1] 
       fmethod  : 0                      # method for ice-ocean flux (0 for diffusion; 1 for ice growth/melting; 2 for both diffusion and growth/melting) 
-      fflush   : 0                      # method for flushing (0 for no flushing; 1 for surface flushing; 2 for surface+internal flushing)                                               
+      fflush   : 0                      # method for flushing (0 for no flushing; 1 for surface flushing; 2 for surface+internal flushing)
       drag     : 0.0054                   # drag coefficient at the ice-water interface [-]
       f_graze  : 0.0 #L2005               # fraction of ice algal growth lost due to grazing [-]
       zia      : 0.03                     # ice algal layer thickness [m]
@@ -79,11 +80,14 @@ instances:
       ks_no3   : 1.0                      # no3 half-saturation value [mmol/m3]
       ks_sil   : 4.0                      # sil half-saturation value [mmol/m3]
       maxg     : 0.85                     # maximum specific growth rate [d-1]
+      # maxg_mel : 2.74                     # Melosira maximum specific growth rate [d-1]
       mort     : 0.03                     # linear mortality rate [d-1]
+      # mort_mel : 0.03                     # Melosira linear mortality rate [d-1]
       mort2    : 0.00015                  # quadratic mortality rate [d-1]
       crit_melt: 0.015                    # critical melt rate [m d-1]
       lcompp   : 0.0 # 1.0 #mock&gradinger99   # compensation intensity [umol m-2 s-1]
       rpp      : 2.0                      # ratio of photosynthetic parameters (alpha and pbm) [W m-2]-1
+      # rpp_mel  : 0.056                      # Melosira ratio of photosynthetic parameters (alpha and pbm) [W m-2]-1
       ## rpi       :                      # ratio of photoinhibition parameters (beta and pbm)
       t_sens   : 0.0633                   # temperature sensitivity [deg.C-1]
       nu       : 1.85e-6                  # kinematic viscosity?
@@ -92,10 +96,11 @@ instances:
       chl2n    : 3.533  #Lavoie 2.80134   # chl to nitrogen ratio
       sil2n    : 1.7                      # silicon to nitrogen ratio                  
     initialization:
-      no3  : 7.2                          # no3 initial value [mmol/m3]
-      sil  : 14.7                         # sil initial value [mmol/m3]
-      ia  : 1.0 #1.0#321.0 # ca. 900 mg-chl m-3    # ia initial value [mmol-N/m3]
-      nh4 : 0.01                          # nh4 initial value [mmol/m3]
+      ia       : 1.0                      # ia initial value [mmol-N/m3]
+      no3      : 7.2                      # no3 initial value [mmol/m3]
+      sil      : 14.7                     # sil initial value [mmol/m3]
+      nh4      : 0.01                     # nh4 initial value [mmol/m3]
+      # mel      : 1.0                      # melosira arctica inital value (mmol N m3)
     
   uvic_dic: #University of Victoria Ice DIC model
     use: false
@@ -118,65 +123,112 @@ instances:
       btlv: 40.0  #def = 40.0   !bot of brine-associated DIC depth (m)
       prop2sw: 0.99  #def=0.99
 
-  uvic_dms:  # University of Victoria DMS(P) model
-    use: true
-    model: uvic/uvic_dms
-    parameters:
-      use_icedms: true         #use icealgae vars #jpnote 
-      f_ow: 0.0                #fraction of open water during ice melting (e.g. leads)
-   # #  dms_0    : 0.1               
-   # #  dmspd_0  : 0.1               
-      q1: 100 #0.15, !Stefels 2007   #S:N ratio for ph1 [mol-S:mol-N]
-      q2: 9.5  #6 !0.015 Galindo 2014   #S:N ratio for ph2 [mol-S:mol-N]
-      yield: 0.20 #Galindo 2015  #bacterial lyase rate constant [per day]
-               #f_slop1 :    #fraction
-               #f_slop2 :
-      k_ly1: 0.03               #
-      k_ly2: 0.03               #
-      f_sl1: 0.3                #
-      f_sl2: 0.3                #
-      f_ex1: 0.05               #
-      f_ex2: 0.05               #
-      k_enz: 0.02               # rate constant for enzymatic cleavage (free lyase) [d-1]
-      k_in1: 0                  #
-      k_in2: 0                  #
-      h_dmspd: 0                # half-saturation constant for bacterial dmspd uptake
-      h_dms: 0                  # half-saturation constant for bacterial dms uptake
-      k_dmspd: 5                #
-      k_dms: 0.5                #
-      k_pho: 0.1                #
-      flux: 0                   # air-sea gas transfer velocity parameterization (0=Nightingale et al, 2000; 1=Liss and Merlivat, 1986+bubble from Woolf 1997)
-      zia: 0.03  
-    initialization: 
-      dms    : 0.1              # dms initial value [nmol/L]
-      dmspd  : 0.1              # dmspd initial value [nmol/L]
+  # uvic_dms:  # University of Victoria DMS(P) model
+  #   use: true
+  #   model: uvic/uvic_dms
+  #   parameters:
+  #     use_icedms: true         #use icealgae vars #jpnote 
+  #     f_ow: 0.0                #fraction of open water during ice melting (e.g. leads)
+  #  # #  dms_0    : 0.1               
+  #  # #  dmspd_0  : 0.1               
+  #     q1: 100 #0.15, !Stefels 2007   #S:N ratio for ph1 [mol-S:mol-N]
+  #     q2: 9.5  #6 !0.015 Galindo 2014   #S:N ratio for ph2 [mol-S:mol-N]
+  #     yield: 0.20 #Galindo 2015  #bacterial lyase rate constant [per day]
+  #              #f_slop1 :    #fraction
+  #              #f_slop2 :
+  #     k_ly1: 0.03               #
+  #     k_ly2: 0.03               #
+  #     f_sl1: 0.3                #
+  #     f_sl2: 0.3                #
+  #     f_ex1: 0.05               #
+  #     f_ex2: 0.05               #
+  #     k_enz: 0.02               # rate constant for enzymatic cleavage (free lyase) [d-1]
+  #     k_in1: 0                  #
+  #     k_in2: 0                  #
+  #     h_dmspd: 0                # half-saturation constant for bacterial dmspd uptake
+  #     h_dms: 0                  # half-saturation constant for bacterial dms uptake
+  #     k_dmspd: 5                #
+  #     k_dms: 0.5                #
+  #     k_pho: 0.1                #
+  #     flux: 0                   # air-sea gas transfer velocity parameterization (0=Nightingale et al, 2000; 1=Liss and Merlivat, 1986+bubble from Woolf 1997)
+  #     zia: 0.03  
+  #   initialization: 
+  #     dms    : 0.1              # dms initial value [nmol/L]
+  #     dmspd  : 0.1              # dmspd initial value [nmol/L]
       
-      ##  s_dmspd :             # dmspd sloppy fraction [-]
-      ## e_dmspd :              # dmspd excrete fraction [-]
-      ## y_dms   :              # bacterial dms yield [-]
-      ## b_dmspd :              # bacterial dmspd consumption rate [1/d]
-      ## l_dmspd :              # dmspd lysis rate [1/d]
-      ## s_dms   :              # dms sloppy fraction [-]
-      ## e_dms   :              # dms excrete fraction [-]
-      ## b_dms   :              # bacterial dms consumption rate [1/d]
-      ## ddp     :              # photolysis rate [1/d]
-  uvic_icedms:
+  #     ##  s_dmspd :             # dmspd sloppy fraction [-]
+  #     ## e_dmspd :              # dmspd excrete fraction [-]
+  #     ## y_dms   :              # bacterial dms yield [-]
+  #     ## b_dmspd :              # bacterial dmspd consumption rate [1/d]
+  #     ## l_dmspd :              # dmspd lysis rate [1/d]
+  #     ## s_dms   :              # dms sloppy fraction [-]
+  #     ## e_dms   :              # dms excrete fraction [-]
+  #     ## b_dms   :              # bacterial dms consumption rate [1/d]
+  #     ## ddp     :              # photolysis rate [1/d]
+
+  # uvic_icedms:
+  #   use: true
+  #   model: uvic/uvic_icedms
+  #   parameters: 
+  #     qi: 9.5       #Galindo 2014
+  #     h_dmspdi: 0
+  #     h_dmsi: 0
+  #     k_dmspdi: 1   #Galindo 2015
+  #     k_dmsi: 0.2
+  #     yieldi: 0.2   #Galindo 2015
+  #     f_exi: 0.05
+  #     k_lyi: 0.03
+  #     k_exi: 0.02
+  #     k_ini: 0
+  #     k_phoi: 0.1 # Taalba 2012 
+  #     zia: 0.03                   # ice algal layer thickness [m]
+  #   initialization:
+  #     dms   : 0.1           
+  #     dmspd : 0.1 
+      
+  uvic_iceeco: #University of Victoria Ice ecosystem model
     use: true
-    model: uvic/uvic_icedms
+    model: uvic/uvic_iceeco           
     parameters: 
-      qi: 9.5       #Galindo 2014
-      h_dmspdi: 0
-      h_dmsi: 0
-      k_dmspdi: 1   #Galindo 2015
-      k_dmsi: 0.2
-      yieldi: 0.2   #Galindo 2015
-      f_exi: 0.05
-      k_lyi: 0.03
-      k_exi: 0.02
-      k_ini: 0
-      k_phoi: 0.1 # Taalba 2012 
-      zia: 0.03                   # ice algal layer thickness [m]
+      zia               : 0.03                    # Ice skeletal layer thickness (m)
+      ear               : 4498                    # Ratio of Ea (activation energy 37.4 kJ mol-1) to R (gas constant 8.314/1000 kJ mol-1 K-1) (K-1)
+      tempref           : 298.15                  # Reference temperature (K)
+      pcref_icedia      : 1.45                     # ice diatom ref rate of photosynthesis (gC gC-1 d-1)
+      alpha_icedia      : 18                      # Initial slope of P-I curve for ice diatoms (gC gChl-1 (W m-2)-1 d-1)
+      qnmin_icedia      : 0.04                    # Min N/C ice diatom (gN gC-1)
+      qnmax_icedia      : 0.125                   # Max N/C ice diatom (gN gC-1)
+      vnref_icedia      : 0.6                     # reference N uptake rate ice diatom (gN gC-1 d-1)
+      chltonmax_icedia  : 1.4                     # max Chl/N ice diatoms (gChl gN-1)
+      zeta_icedia       : 2.0                     # respiratory cost of biosynthesis (gC gN-1)
+      mlin_icedia       : 0.04                   # linear mortality rate ice diatoms (d-1)
+      t_sens            : 0.0633                  # temperature sensitivity of linear mortality (C-1)
+      mquad_icedia      : 0.000004                # quadratic mortality rate ice diatoms ((mgC m-3)-1 d-1)
+      min_icedia        : 96.0                    # mortality threshold ice diatoms (mgC m-3)
+      kno3_icedia       : 1.0                     # NO3 half saturation constant for ice diatoms (mmol m-3)
+      knh4_icedia       : 1.0                     # NH4 half saturation constant for ice diatoms (mmol m-3)
+      crit_melt         : 0.015                   # critical melt rate (m d-1)
+      drag              : 0.0054                  # drag coefficient at the ice-water interface (-)
+      md_no3            : 5e-9                 # molecular diffusion coefficient for nitrate (m2 s-1)
+      # md_no3            : 5e-10                  # molecular diffusion coefficient for nitrate (m2 s-1)
+      nu                : 1.86e-6                 # kinematic viscosity (m2 s-1)
+      knit              : 0.01                    # nitrification rate (d-1)
+      fmin              : 0.3                     # NH4 remineralization fraction (-)
+      r_pond            : 0.0175                  # melt pond drainage rate (m d-1) 
+      dmo               : 0.00002                 # melt off coeffecient (mgC m-3)-1 d-1
+      tmo               : -2.75                   # melt off temp (C)
+      flshia            : 0.4                     # fraction of ice algae flushed
+      ac_ia             : 0.06                    # specific light attenuation coefficient for ice algae (mg Chl m-2)-1
+      melosira          : 1                       # switch to activate melosira (0: without, 1 with)
+      pcref_melosira    : 6.19                    # melosira ref rate of photosynthesis (gC gC-1 d-1)
+      alpha_melosira    : 1.88                    # Initial slope of P-I curve for melosira (gC gChl-1 (W m-2)-1 d-1)
+      chltonmax_mel     : 0.3                     # max Chl/N melosira (gChl gN-1)
+
     initialization:
-      dms   : 0.1           
-      dmspd : 0.1 
-      
+      icedia_c      : 96.0                        # ice diatom C biomass initial value (mgC m-3)
+      icedia_chl    : 12.0                        # ice diatom Chl biomass initial value (mgChl m-3)
+      icedia_n      : 12.0                        # ice diatom N biomass initial value (mgN m-3)
+      melosira_c    : 2.88    #96*3cm.1m to have same mg m-2                        # melosira C biomass initial value (mgC m-3)
+      melosira_chl  : 0.36                        # melosira Chl biomass initial value (mgChl m-3)
+      melosira_n    : 0.36                        # melosira N biomass initial value (mgN m-3)
+      inh4          : 0.01                        # bottom ice NH4 initial value (mmol m-3)
+      ino3          : 7.2                         # bottom ice NO3 initial value (mmol m-3)
