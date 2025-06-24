@@ -9,7 +9,7 @@ location:
    longitude: -95.25                       # longitude [degrees East; min=-360.0; max=360.0; default=0.0]
    depth: 100.0                            # water depth [m; min=0.0; default=100.0]
 time:
-   start: 2010-04-01 00:00:00              # start date and time [yyyy-mm-dd HH:MM:SS; default=2017-01-01 00:00:00]
+   start: 2010-02-01 00:00:00              # start date and time [yyyy-mm-dd HH:MM:SS; default=2017-01-01 00:00:00]
    # start: 2010-04-01 00:00:00              # start date and time [yyyy-mm-dd HH:MM:SS; default=2017-01-01 00:00:00]
    stop: 2010-09-30 23:00:00               # stop date and time [yyyy-mm-dd HH:MM:SS; default=2018-01-01 00:00:00]
    # dt: 600.0                               # time step for integration [s; min=0.0; default=3600.0]
@@ -127,14 +127,15 @@ surface:
    precip:                                 # precipitation [m/s]
       method: file                         # method [constant, file=from file; default=constant]
       constant_value: 0.0                  # value to use throughout the simulation [m/s; default=0.0]
-      file: precip_EC-low.dat                  # path to file with time series [default=]
+      file: precip_EC-high.dat                  # path to file with time series [default=]
       column: 1                            # index of column to read from [default=1]
       flux_impact: false                   # include effect on fluxes of sensible heat and momentum [default=false]
    calc_evaporation: false                 # calculate evaporation from meteorological conditions [default=false]
    swr:                                    # shortwave radiation [W/m^2]
-      method: calculate                    # method [constant, file=from file, calculate=from time, location and cloud cover; default=constant]
+      # method: calculate                    # method [constant, file=from file, calculate=from time, location and cloud cover; default=constant]
+      method: file                         # method [constant, file=from file, calculate=from time, location and cloud cover; default=constant]
       constant_value: 0.0                  # value to use throughout the simulation [W/m^2; min=0.0; default=0.0]
-      file:                                # path to file with time series [default=]
+      file: jra55-swr-2010.csv             # path to file with time series [default=]
       column: 1                            # index of column to read from [default=1]
    longwave_radiation:                     # longwave radiation [W/m^2]
       type: 1                              # type [1='net longwave radiation', 2='incoming longwave radiation'), default=1]
@@ -162,27 +163,42 @@ surface:
       Ameltmax: 0.3D+00 #0.5D+00                    # Maximum meltpond area fraction allowed
       drainrate: 0.0175D+00                # Melt pond drainage rate in [m/d]
       hh0: 0.10D+00                        # initial thickness for S calculation
-      ice_hi_i: 0.10D+00                     # initial ice thickness
+      ice_hi_i: 0.70                       # initial ice thickness
       # ice_hi_i: 0.1D+00                     # initial ice thickness
-      ice_hs_i: 0.00D+00                     # initial snow thickness
+      ice_hs_i: 0.125+00                     # initial snow thickness
       # ice_hs_i: 0.0D+00                     # initial snow thickness
       albice_method: 4                      # 1:constant albedo (albice_f and albsnow_f) 2:albice dependent on ice thickness - attempt to capture the evolution of melt ponds (Flato&Brown 1996) albsnow is set to albsnow_f (constant) 3:albice and albsnow based on eq12&13 of Flato&Brown1996 4:albice and albsnow dependent on temperature (same as transs/transi formulation)
-      ## albice=0.5D+00                    # reference value from flato & brown
-      albice_f: 0.60D+00                   # freezing ice albedo
-      albice_m: 0.50D+00                   # melting ice albedo
-      ##albmelt=0.3D+00                    # reference value from flato & brown
-      albmelt: 0.30D+00                    # melt pond albedo
-      albsnow_f: 0.80D+00                  # freezing snow albedo
-      albsnow_m: 0.70D+00                  # melting snow albedo 
-      transsf: 0.15D+00                    # freezing snow transmission coefficient
-      transsm: 0.15D+00                    # melting snow transmission coefficient
-      transif: 0.5D+00                     # freezing ice transmission coefficient
-      transim: 0.5D+00                     # melting ice transmission coefficient
-      transm: 0.5D+00                      # melt pond transmision coefficient
-      swkappasm: 7.5D+00                   # melting snow extinction coefficient
-      swkappasf: 14.0D+00                  # freezing snow extinction coefficient
-      swkappaim: 0.8D+00                   # melting ice extinction coefficient
-      swkappaif: 1.2D+00                   # freezing ice extinction
+      # ## albice=0.5D+00                    # reference value from flato & brown
+      # albice_f: 0.60D+00                   # freezing ice albedo
+      # # albice_m: 0.50D+00                   # melting ice albedo
+      # albice_m: 0.40D+00                   # melting ice albedo
+      # ##albmelt=0.3D+00                    # reference value from flato & brown
+      # albmelt: 0.30D+00                    # melt pond albedo
+      # albsnow_f: 0.80D+00                  # freezing snow albedo
+      # albsnow_m: 0.70D+00                  # melting snow albedo 
+      # transsf: 0.15D+00                    # freezing snow transmission coefficient
+      # transsm: 0.15D+00                    # melting snow transmission coefficient
+      # transif: 0.5D+00                     # freezing ice transmission coefficient
+      # transim: 0.5D+00                     # melting ice transmission coefficient
+      # transm: 0.5D+00                      # melt pond transmision coefficient
+      # swkappasf: 14.0D+00                  # freezing snow extinction coefficient
+      # swkappasm: 7.5D+00                   # melting snow extinction coefficient
+      # swkappaif: 1.2D+00                   # freezing ice extinction
+      # swkappaim: 0.8D+00                   # melting ice extinction coefficient
+      albsnow_f: 0.85D+00                  # freezing snow albedo
+      albsnow_m: 0.8D+00                  # melting snow albedo 
+      albice_f: 0.65D+00                   # freezing ice albedo
+      albice_m: 0.55D+00                   # melting ice albedo
+      albmelt: 0.40D+00                    # melt pond albedo
+      transsf: 0.12D+00                    # freezing snow transmission coefficient
+      transsm: 0.12D+00                    # melting snow transmission coefficient
+      transif: 0.6D+00                     # freezing ice transmission coefficient
+      transim: 0.7D+00                     # melting ice transmission coefficient
+      transm: 0.4D+00                      # melt pond transmision coefficient
+      swkappasf: 11.0D+00                  # freezing snow extinction coefficient
+      swkappasm: 9.D+00                   # melting snow extinction coefficient
+      swkappaif: 0.6D+00                   # freezing ice extinction
+      swkappaim: 0.2D+00                   # melting ice extinction coefficient
 
 
    roughness:

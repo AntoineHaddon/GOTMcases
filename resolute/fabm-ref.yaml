@@ -210,7 +210,7 @@ instances:
       knh4_icedia       : 1.0                     # NH4 half saturation constant for ice diatoms (mmol m-3)
       crit_melt         : 0.015                   # critical melt rate (m d-1)
       drag              : 0.0054                  # drag coefficient at the ice-water interface (-)
-      md_n              : 1e-10                   # molecular diffusion coefficient for nitrate (m2 s-1)
+      md_n              : 5e-9                    # molecular diffusion coefficient for nitrate (m2 s-1)
       # md_n            : 3e-10                    # molecular diffusion coefficient for nitrate (m2 s-1)
       nu                : 1.86e-6                 # kinematic viscosity (m2 s-1)
       knit              : 0.01                    # nitrification rate (d-1)
