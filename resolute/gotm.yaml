@@ -12,6 +12,7 @@ time:
    start: 2010-02-01 00:00:00              # start date and time [yyyy-mm-dd HH:MM:SS; default=2017-01-01 00:00:00]
    # start: 2010-04-01 00:00:00              # start date and time [yyyy-mm-dd HH:MM:SS; default=2017-01-01 00:00:00]
    stop: 2010-09-30 23:00:00               # stop date and time [yyyy-mm-dd HH:MM:SS; default=2018-01-01 00:00:00]
+   # stop: 2010-06-30 23:00:00               # stop date and time [yyyy-mm-dd HH:MM:SS; default=2018-01-01 00:00:00]
    # dt: 600.0                               # time step for integration [s; min=0.0; default=3600.0]
    dt: 400.0                               # time step for integration [s; min=0.0; default=3600.0]
 grid:
@@ -48,9 +49,8 @@ salinity:                                  # salinity profile used for initializ
    # NN: 2.56000000E-04                      # square of buoyancy frequency [s^-2; min=0.0; default=0.0]
    NN: 0.0                                 # square of buoyancy frequency [s^-2; min=0.0; default=0.0]
    relax:                                  # relax model salinity to observed/prescribed value
+      tau: 4.0E+6                          # time scale for interior layer [s; min=0.0; default=1.00000000E+15]
       # tau: 86400.0                         # time scale for interior layer [s; min=0.0; default=1.00000000E+15]
-      tau: 4.0E+6                   # time scale for interior layer [s; min=0.0; default=1.00000000E+15]
-      # tau: 1.0E+15                        # time scale for interior layer [s; min=0.0; default=1.00000000E+15]
       tau_s: 86400.0                       # time scale for surface layer [s; min=0.0; default=1.00000000E+15]
       tau_b: 86400.0                       # time scale for bottom layer [s; min=0.0; default=1.00000000E+15]
 velocities:
@@ -58,20 +58,20 @@ velocities:
       method: file                      # method [constant, file=from file; default=constant]
       constant_value: 0.0               # value to use throughout the simulation [m/s; default=0.0]
       # file: v_prof_Res_XM_02_13.dat     # path to file with time series [default=]
-      file: v_prof_+tides2010.dat     # path to file with time series [default=]
-      # file: v_surf_+tides2010.dat     # path to file with time series [default=]
+      file: v_surf_+tides2010.dat     # path to file with time series [default=]
+      # file: v_prof_+tides2010.dat       # path to file with time series [default=]
       column: 1                         # index of column to read from [default=1]
    v:
       method: file                      # method [constant, file=from file; default=constant]
       constant_value: 0.0               # value to use throughout the simulation [m/s; default=0.0]
       # file: v_prof_Res_XM_02_13.dat     # path to file with time series [default=]
-      file: v_prof_+tides2010.dat     # path to file with time series [default=]
-      # file: v_surf_+tides2010.dat     # path to file with time series [default=]
+      file: v_surf_+tides2010.dat     # path to file with time series [default=]
+      # file: v_prof_+tides2010.dat       # path to file with time series [default=]
       column: 2                         # index of column to read from [default=1]
    relax:
-      # tau: 21600.0                         # [default=1.e15]
-      # tau: 60000.0                         # [default=1.e15]
-      tau: 86400.0                         # [default=1.e15]
+      # tau: 600.0                         # [default=1.e15]
+      tau: 400.0                         # [default=1.e15]
+      # tau: 86400.0                         # [default=1.e15]
       ramp: 1.00000000E+15               # [default=1.e15]
 surface:
    fluxes:                                 # heat and momentum fluxes
@@ -417,9 +417,9 @@ restart:
    load: false                             # initialize simulation with state stored in restart.nc [default=false]
 output:
    all:                                    # path of output file, excluding extension
-      time_unit: hour                      # time unit [second, hour, day, month, year, dt=model time step; default=day]
+      time_unit: hour                        # time unit [second, hour, day, month, year, dt=model time step; default=day]
       time_step: 1                         # number of time units between output [min=1; default=1]
-      time_method: point                   # treatment of time dimension [point=instantaneous, mean, integrated; default=point]
+      time_method: mean                   # treatment of time dimension [point=instantaneous, mean, integrated; default=point]
       variables:
       - source: *                          # variable name in model
    ice:                                    # path of output file, excluding extension

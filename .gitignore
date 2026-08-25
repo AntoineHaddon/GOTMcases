@@ -4,11 +4,12 @@
 timestamp
 acpy/
 
-resolute/PIsensitivity
+resolute/*sensitivity*
+resolute/oldCN
 resolute/2mPARhighsnow-resolute2010.csv
 resolute/2mPARlowsnow-resolute2010.csv
 resolute/incidentPAR-resolute2010.csv
 resolute/PARdata-approx.dat
-resolute/precip_EC-low.dat
-resolute/jra55-swr-2010.csv
-resolute/mdNsensitivity
+resolute/iceBGC-approx.dat
+
+rothera/**/*.csv
